@@ -36,17 +36,30 @@ void createMatrix(const string &key, char matrix[5][5]) {
 
 // Prepare plaintext
 string preprocess(const string &text) {
-    string out = "";
+    string clean = "";
+    // Step 1 & 2: lowercase, replace j->i, remove non-letters
     for (int i = 0; i < text.length(); i++) {
         char c = tolower(text[i]);
-        if (isalpha(c)) {
-            if (c == 'j') c = 'i';
-            out += c;
+        if (!isalpha(c)) continue;
+        if (c == 'j') c = 'i';
+        clean += c;
+    }
+
+    // Step 3: handle digraphs with same letters
+    string out = "";
+    for (int i = 0; i < clean.length(); i++) {
+        out += clean[i];
+        if (i + 1 < clean.length() && clean[i] == clean[i + 1]) {
+            out += 'x';  // insert x between same letters
         }
     }
-    if (out.size() % 2 != 0) out += 'x';
+
+    // Step 4: append x if length is odd
+    if (out.length() % 2 != 0) out += 'x';
+
     return out;
 }
+
 
 // Find character position in matrix
 void findPos(char matrix[5][5], char c, int &r, int &col) {
